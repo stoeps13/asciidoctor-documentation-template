@@ -11,18 +11,14 @@
 :icons: font
 :source-highlighter: rouge
 :quick-uri: https://stoeps.de
-:url-docs: https://asciidoctor.org/docs
-:url-gem: https://rubygems.org/gems/asciidoctor
 :numbered:
 :copyright-name: Christoph Stoettner
 :company-name: Vegard IT GmbH
 :logo-image-name: logo_200.png
-
 :toc: left
-
 :outlinelevels: 3
 
-= Example Pentest Report
+= Example Report
 
 include::_variables-linux.asciidoc[]
 include::_variables-project.asciidoc[]
@@ -32,6 +28,8 @@ include::_attributes.asciidoc[]
 Template for pentest, or Hack the box machine exploitation.
 
 = Networkplan
+
+// Use plantuml for example to create a networkplan.
 
 == Conditions testing
 
@@ -146,13 +144,13 @@ The application server will not start without the databases.
 .customization\themes\Theme\custom.css
 [source,css,linenums]
 ----
-include::configfiles/customization/themes/Theme/custom.css[]
+// include::configfiles/customization/themes/Theme/custom.css[]
 ----
 
 .customization\themes\Theme\applications\blogs.css
 [source,css,linenums]
 ----
-include::configfiles/customization/themes/Theme/applications/blogs.css[]
+// include::configfiles/customization/themes/Theme/applications/blogs.css[]
 ----
 
 === Configuration

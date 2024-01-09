@@ -9,8 +9,6 @@
 #      "document.adoc"
 
 asciidoctor-pdf \
-  -a pdf-themesdir=resources/themes \
+  -a pdf-themesdir=~/.asciidoctor/theme \
   -a pdf-theme=stoeps-theme.yml \
-  -a pdf-fontsdir=resources/fonts \
-  -a iconsdir=resources/icons \
   "document.adoc"
