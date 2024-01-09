@@ -1,0 +1,4 @@
+:OS: Windows Server 2016 Datacenter Edition
+:SLASH: \
+:VERSION: 0.8
+

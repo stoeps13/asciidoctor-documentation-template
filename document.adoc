@@ -1,0 +1,255 @@
+:doctype: book
+:author: Christoph Stoettner
+:email: christoph.stoettner@stoeps.de
+:revnumber: 1.0
+:revdate: 2024-01-07
+:encoding: utf-8
+:lang: en
+:experimental:
+:imagesdir: ../images
+:imagesoutdir: ../images
+:icons: font
+:source-highlighter: rouge
+:quick-uri: https://stoeps.de
+:url-docs: https://asciidoctor.org/docs
+:url-gem: https://rubygems.org/gems/asciidoctor
+:numbered:
+:copyright-name: Christoph Stoettner
+:company-name: Vegard IT GmbH
+:logo-image-name: logo_200.png
+
+:toc: left
+
+:outlinelevels: 3
+
+= Example Pentest Report
+
+include::_variables-linux.asciidoc[]
+include::_variables-project.asciidoc[]
+include::_attributes.asciidoc[]
+
+
+Template for pentest, or Hack the box machine exploitation.
+
+= Networkplan
+
+== Conditions testing
+
+=== Software Updates
+
+Hello Froscon.
+Here we check the `VERSION` from our variables doc.
+When we update the main document, it can happen that we adjust the version numbers, then new generated documents show this warning.
+
+ifeval::["{VERSION}" >= "8.5.5.7"]
+INFO: No updates needed!
+endif::[]
+
+ifeval::["{VERSION}" < "8.5.5.6"]
+WARNING: Update needed!
+endif::[]
+
+== Infrastructure and Software
+
+Used operating system on all servers is {OS}.
+
+=== Cool Project 6.0 - new enviroment
+[width=80%,cols=3,options=header]
+|===
+|Hostname |IP |Function
+|grpkiwi01.example.org |10.2.105.47 |ApplServer, Webserver, Cool Project
+|grpkiwidb01.example.org |10.2.105.48 |DB, TDI, Shared Directory
+|===
+
+=== Installed Applications
+
+==== Application Server
+
+* Application Server Network Deployment 8.5.5 + {WAS_FIX}
+** `{WAS_ROOT}\ApplicationServer`
+* Application Server Supplement 8.5.5 + {WAS_FIX}
+* Application Server Customization Toolbox 8.5.5 + {WAS_FIX}
+** `{WAS_ROOT}\Toolbox`
+* Java SDK 8.0.5.6
+* Application Server Plugins 8.5.5 + {WAS_FIX}
+** `{WAS_ROOT}\Plugins`
+
+==== Webserver
+
+* ABC HTTP Server 8.5.5 + {WAS_FIX}
+** `{IHS_ROOT}`
+
+==== Datenbase Server
+
+* DB 1333.1 FP3 ESE
+** `D:\ABC\SQLLIB`
+** Datenbases: `D:\ABC\NODE000`
+
+==== Directory Synchronisation
+
+* Directory Synchronisation 7.1.1 FP8
+** `D:\ABC\DS\V7.1.1`
+* Working Dir
+** `D:\ABC\DS\workspace`
+
+==== Cool Project Docs Viewer
+
+* Cool Project Docs 2.0 CR3 IF002
+** `D:\ABC\CoolProjectDocs`
+
+===== Voraussetzung
+
+* Python 2.7.15 64 Bit
+** `D:\ABC\Python27`
+
+== User and Passwords
+
+[options=header]
+|===
+|User |Passwort |Funktion
+|dbadmin |SecurePassword123 |DB Administrator
+|user |SecurePassword123 |DB Benutzer Cool Project
+|ldapadmin |SecurePassword123 |Cool Project Admin, LDAP User
+|CN=ldap,OU=Gruppen,DC=example,DC=loc |ldap |LDAP Bind User
+|webadmin |SecurePassword123 |Webserver Config
+|===
+
+=== Service User
+
+Services and cronjobs (Scheduluer) run as `example\ldapadmin`. Exception is database backup, which is running as `dbadmin`.
+
+[options=header]
+|===
+|Service |User
+|ABC HTTP Server |`example\ldapadmin`
+|ABC HTTP Admin |`example\ldapadmin`
+|ABC Application Server - CellManager |`example\ldapadmin`
+|ABC Application Server - CnxNode01 |`example\ldapadmin`
+|===
+
+== Backup
+
+CAUTION: Both servers need to be backuped on a daily basis!
+Each day at 9:00pm there are dumps written to `d:\backup\`, include this into your snapshots or file backup!
+
+== Server Restart
+
+After Update installation always start the database server `grpkiwidb01.example.org` first!
+The application server will not start without the databases.
+
+== Appendix
+
+=== Customizing
+
+==== Layout and CSS
+
+.customization\themes\Theme\custom.css
+[source,css,linenums]
+----
+include::configfiles/customization/themes/Theme/custom.css[]
+----
+
+.customization\themes\Theme\applications\blogs.css
+[source,css,linenums]
+----
+include::configfiles/customization/themes/Theme/applications/blogs.css[]
+----
+
+=== Configuration
+
+==== Windows Server 2016
+
+[NOTE]
+During installation **Windows Defender** slowed down the whole process. That's normal, because it likes to scan all `*.jar` files.
+So we deactivated it during the installation process.
+
+===== Deactivate IPv6
+
+All network cards have disabled IPv6, except Loopback!
+We used https://support.microsoft.com/de-de/help/929852/guidance-for-configuring-ipv6-in-windows-for-advanced-users[], so if you need to activate again, use the script!
+
+[WARNING]
+Activating IPv6 need extended tests, the product does not officially support it!
+
+==== Application Server
+
+===== Java Heap Size
+
+[options=header,cols="<,>,>"]
+|====
+|Server (JVM) |initialHeapSize (in MB) |maximumHeapSize (in MB)
+|CellManager01 - dmgr |384 |1024
+|Node01 - UtilCluster_server1|2560|2560
+|Node01 - Tools_server1|512|1024
+|Node01 - InfraCluster_server1|2560|2560
+|Node01 - AppsCluster_server1|2560|1024
+|Node01 - Conversion_server1|2506|2506
+|Node01 - nodeagent|512|768
+|Node01 - Viewer_server1|2506|2506
+|Node01 - PushCluster_server1|2560|2560
+|====
+
+===== Security
+
+====== Authentication
+
+Authentication is configured to AD. Primary LDAP is `w8d1746.example.org` and failover `dc05.example.org`.
+
+=== Skripts
+
+==== Remove user from Community
+
+WARNING: the script uses hardcoded filename for mail address list.
+
+.removeUsers.py
+[source,python,linenums]
+----
+import os
+import sys
+
+myfile = open('D:/install/mailaddresses.csv', 'r')
+
+memberlist = []
+execfile("communitiesAdmin.py")
+
+for line in myfile.readlines():
+	memberlist = [line]
+	try:
+		CommunitiesService.removeMembersFromCommunityByEmail('example-aktuell', memberlist)
+		print memberlist[0]
+	except:
+		print 'Error removing ' + memberlist[0]
+
+----
+
+Folling command removes the users:
+
+[source,bash,linenums]
+----
+cd D:\ABC\ApplServer\AppServer\profiles\Dmgr01\bin
+wsadmin.bat -lang jython -username ldapadmin -password <password>
+
+execfile("removeUsers.py")
+----
+
+.addUsers.py
+[source,python,linenums]
+----
+import os
+import sys
+
+myfile = open('D:/install/mailaddresses.csv', 'r')
+
+memberlist = []
+execfile("communitiesAdmin.py")
+
+for line in myfile.readlines():
+	memberlist = [line]
+	try:
+		CommunitiesService.addMembersToCommunityByEmail('example-aktuell', 0, memberlist)
+		print memberlist[0]
+	except:
+		print 'Error removing ' + memberlist[0]
+
+----
+

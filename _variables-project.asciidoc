@@ -1,0 +1,5 @@
+:WAS_ROOT: D:\ABC\ApplSrv
+:WAS_DMGR: {WAS_ROOT}\AppServer\profiles\Dmgr01
+:WAS_FIX: Fixpack 13
+:IHS_ROOT: D:\ABC\HTTPServer
+
